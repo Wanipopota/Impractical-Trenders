@@ -1,30 +1,40 @@
-const stripe = require('stripe')(process.env.sk_test_51Py2DyRoahsY22m3rDGwdjKoNU2Rf0vu2W319MMwb4XB68yLk3rvQyFzu6sE1gNws0qqzm9tbsuLkknC7bFBTNQh00dzjJolYU);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 module.exports = {
   createCheckoutSession: async function(items) {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: items.map(item => ({
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: item.name,
-            images: [item.image],
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: items.map(item => ({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.name,
+              images: item.image ? [item.image] : undefined,
+            },
+            unit_amount: Math.round(item.price * 100), // Stripe expects the amount in cents
           },
-          unit_amount: item.price * 100, // Stripe expects the amount in cents
-        },
-        quantity: item.quantity,
-      })),
-      mode: 'payment',
-      success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL}/cancel`,
-    });
+          quantity: item.quantity,
+        })),
+        mode: 'payment',
+        success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.CLIENT_URL}/cancel`,
+      });
 
-    return session;
+      return session;
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      throw error;
+    }
   },
 
   retrieveCheckoutSession: async function(sessionId) {
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    return session;
+    try {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      return session;
+    } catch (error) {
+      console.error('Error retrieving checkout session:', error);
+      throw error;
+    }
   },
 };
