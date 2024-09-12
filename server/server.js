@@ -2,9 +2,12 @@ const express = require('express');
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
 const path = require('path');
+const cors = require('cors');
+require('dotenv').config();
 
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
+const { authMiddleware } = require('./utils/auth');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -19,7 +22,20 @@ const startApolloServer = async () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   
-  app.use('/graphql', expressMiddleware(server));
+  // Setup CORS for development
+  if (process.env.NODE_ENV !== 'production') {
+    app.use(cors());
+  }
+
+  app.use('/graphql', expressMiddleware(server, {
+    context: authMiddleware
+  }));
+
+  // Stripe webhook route (if needed)
+  app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    // Add Stripe webhook handling logic here
+  });
 
   // if we're in production, serve client/dist as static assets
   if (process.env.NODE_ENV === 'production') {
@@ -36,6 +52,13 @@ const startApolloServer = async () => {
       console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
     });
   });
+
+  // Error handling for database connection
+  db.on('error', (error) => {
+    console.error('MongoDB connection error:', error);
+  });
 };
 
-startApolloServer();
+startApolloServer().catch(error => {
+  console.error('Failed to start server:', error);
+});
