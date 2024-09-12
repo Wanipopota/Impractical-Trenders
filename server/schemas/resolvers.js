@@ -12,12 +12,12 @@ const resolvers = {
       }
       throw new AuthenticationError('Not logged in');
     },
-    products: async () => {
-      return await Product.find();
-    },
-    product: async (parent, { _id }) => {
-      return await Product.findById(_id);
-    },
+    // products: async () => {
+    //   return await Product.find();
+    // },
+    // product: async (parent, { _id }) => {
+    //   return await Product.findById(_id);
+    // },
     orders: async (parent, args, context) => {
       if (context.user) {
         const user = await User.findById(context.user._id).populate('orders');
@@ -34,11 +34,11 @@ const resolvers = {
     }
   },
   Mutation: {
-    addUser: async (parent, args) => {
-      const user = await User.create(args);
-      const token = signToken(user);
-      return { token, user };
-    },
+    // addUser: async (parent, args) => {
+    //   const user = await User.create(args);
+    //   const token = signToken(user);
+    //   return { token, user };
+    // },
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
       if (!user) {
@@ -59,10 +59,10 @@ const resolvers = {
       }
       throw new AuthenticationError('Not logged in');
     },
-    updateProduct: async (parent, { _id, quantity }) => {
-      const decrement = Math.abs(quantity) * -1;
-      return await Product.findByIdAndUpdate(_id, { $inc: { quantity: decrement } }, { new: true });
-    }
+    // updateProduct: async (parent, { _id, quantity }) => {
+    //   const decrement = Math.abs(quantity) * -1;
+    //   return await Product.findByIdAndUpdate(_id, { $inc: { quantity: decrement } }, { new: true });
+    // }
   }
 };
 

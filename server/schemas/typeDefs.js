@@ -11,7 +11,7 @@ type User {
 }
 type Order {
     _id: ID
-    purchaseDate: Date
+    purchaseDate: String
     status: String
     total: Float
     products: [Product]
@@ -31,12 +31,12 @@ type Query {
     users: [User]
     user(username: String!): User
     orders(username: String): [Order]
-    orders(orderId: ID!): Order
+    order(orderId: ID!): Order
 }
 
 type Mutation {
-    adduser(username: String!, email: String!, password: String!)
-    login(email: String!, password: String!)
+    adduser(username: String!, email: String!, password: String!): User
+    login(email: String!, password: String!): User
     addProduct(name: String!, description: String, price: Float!, quantity: Int!, image: String, category: String): Product
     removeProduct(productId: ID!): Product
     addOrder(productId: ID!): Order
