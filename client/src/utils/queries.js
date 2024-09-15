@@ -1,3 +1,4 @@
+//queries.js
 import { gql } from '@apollo/client';
 
 export const QUERY_PRODUCTS = gql`
@@ -14,7 +15,7 @@ export const QUERY_PRODUCTS = gql`
 `;
 
 export const QUERY_CHECKOUT = gql`
-  query getCheckout($products: [ProductInput]) {
+  query getCheckout($products: [ID]!) {
     checkout(products: $products) {
       session
     }

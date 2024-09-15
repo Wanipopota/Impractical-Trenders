@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
@@ -11,6 +12,15 @@ const { authMiddleware } = require('./utils/auth');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
+
+// CORS configuration
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://localhost:3001'], // Added both client and server ports
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -21,11 +31,6 @@ const startApolloServer = async () => {
   
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
-  
-  // Setup CORS for development
-  if (process.env.NODE_ENV !== 'production') {
-    app.use(cors());
-  }
 
   app.use('/graphql', expressMiddleware(server, {
     context: authMiddleware
