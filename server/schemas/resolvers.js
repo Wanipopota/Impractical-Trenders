@@ -1,59 +1,61 @@
-//resolvers.js
-const { AuthenticationError } = require('apollo-server-express');
 const { User, Product, Order } = require('../models');
-const { signToken } = require('../utils/auth');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { signToken, AuthenticationError } = require('../utils/auth');
+const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 
 const resolvers = {
   Query: {
-    user: async (parent, args, context) => {
-      if (context.user) {
-        const user = await User.findById(context.user._id).populate('orders');
-        return user;
+    products: async (parent, { name }) => {
+      const params = {};
+
+      if (name) {
+        params.name = {
+          $regex: name
+        };
       }
-      throw new AuthenticationError('Not logged in');
-    },
-    products: async () => {
-      return await Product.find();
+
+      return await Product.find(params);
     },
     product: async (parent, { _id }) => {
       return await Product.findById(_id);
     },
-    orders: async (parent, args, context) => {
+    user: async (parent, args, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate('orders');
-        return user.orders;
+        const user = await User.findById(context.user._id).populate('orders.products');
+
+        user.orders.sort((a, b) => b.purchaseDate - a.purchaseDate);
+
+        return user;
       }
-      throw new AuthenticationError('Not logged in');
+
+      throw AuthenticationError;
     },
     order: async (parent, { _id }, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate('orders');
+        const user = await User.findById(context.user._id).populate('orders.products');
+
         return user.orders.id(_id);
       }
-      throw new AuthenticationError('Not logged in');
+
+      throw AuthenticationError;
     },
-    checkout: async (parent, { products }, context) => {
+    checkout: async (parent, args, context) => {
       const url = new URL(context.headers.referer).origin;
+      await Order.create({ products: args.products.map(({ _id }) => _id) });
+
       const line_items = [];
 
-      for (const productId of products) {
-        const product = await Product.findById(productId);
-
-        if (!product) {
-          throw new Error(`Product not found: ${productId}`);
-        }
-
+      for (const product of args.products) {
         line_items.push({
           price_data: {
             currency: 'usd',
             product_data: {
               name: product.name,
               description: product.description,
+              images: [`${url}/images/${product.image}`]
             },
-            unit_amount: Math.round(product.price * 100), // Stripe expects the amount in cents
+            unit_amount: product.price * 100,
           },
-          quantity: 1,
+          quantity: product.purchaseQuantity,
         });
       }
 
@@ -69,35 +71,52 @@ const resolvers = {
     },
   },
   Mutation: {
-    addUser: async (parent, { firstName, lastName, email, password }) => {
-      const user = await User.create({ firstName, lastName, email, password });
+    addUser: async (parent, args) => {
+      const user = await User.create(args);
       const token = signToken(user);
-      return { token, user };
-    },
-    login: async (parent, { email, password }) => {
-      const user = await User.findOne({ email });
-      if (!user) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
-      const correctPw = await user.isCorrectPassword(password);
-      if (!correctPw) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
-      const token = signToken(user);
+
       return { token, user };
     },
     addOrder: async (parent, { products }, context) => {
       if (context.user) {
         const order = new Order({ products });
+
         await User.findByIdAndUpdate(context.user._id, { $push: { orders: order } });
+
         return order;
       }
-      throw new AuthenticationError('Not logged in');
+
+      throw AuthenticationError;
     },
-    // updateProduct: async (parent, { _id, quantity }) => {
-    //   const decrement = Math.abs(quantity) * -1;
-    //   return await Product.findByIdAndUpdate(_id, { $inc: { quantity: decrement } }, { new: true });
-    // }
+    updateUser: async (parent, args, context) => {
+      if (context.user) {
+        return await User.findByIdAndUpdate(context.user._id, args, { new: true });
+      }
+
+      throw AuthenticationError;
+    },
+    updateProduct: async (parent, { _id, quantity }) => {
+      const decrement = Math.abs(quantity) * -1;
+
+      return await Product.findByIdAndUpdate(_id, { $inc: { quantity: decrement } }, { new: true });
+    },
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        throw AuthenticationError;
+      }
+
+      const correctPw = await user.isCorrectPassword(password);
+
+      if (!correctPw) {
+        throw AuthenticationError;
+      }
+
+      const token = signToken(user);
+
+      return { token, user };
+    }
   }
 };
 

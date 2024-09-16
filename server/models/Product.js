@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const { Schema } = mongoose;
 
 const productSchema = new Schema({
@@ -8,8 +9,7 @@ const productSchema = new Schema({
     trim: true
   },
   description: {
-    type: String,
-    required: true
+    type: String
   },
   image: {
     type: String
@@ -23,7 +23,7 @@ const productSchema = new Schema({
     type: Number,
     min: 0,
     default: 0
-  }
+  },
 });
 
 const Product = mongoose.model('Product', productSchema);

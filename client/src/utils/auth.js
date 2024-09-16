@@ -42,7 +42,4 @@ class AuthService {
   }
 }
 
-const authService = new AuthService();
-
-export default authService;
-export const { getToken } = authService;
+export default new AuthService();
