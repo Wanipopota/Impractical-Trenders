@@ -1,7 +1,8 @@
-//user.js
 const mongoose = require('mongoose');
+
 const { Schema } = mongoose;
 const bcrypt = require('bcrypt');
+const Order = require('./Order');
 
 const userSchema = new Schema({
   firstName: {
@@ -17,23 +18,17 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
-    match: [/.+@.+\..+/, 'Must match an email address!']
+    unique: true
   },
   password: {
     type: String,
     required: true,
     minlength: 5
   },
-  orders: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Order'
-    }
-  ]
+  orders: [Order.schema]
 });
 
-// Set up pre-save middleware to create password
+// set up pre-save middleware to create password
 userSchema.pre('save', async function(next) {
   if (this.isNew || this.isModified('password')) {
     const saltRounds = 10;
@@ -43,7 +38,7 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-// Compare the incoming password with the hashed password
+// compare the incoming password with the hashed password
 userSchema.methods.isCorrectPassword = async function(password) {
   return await bcrypt.compare(password, this.password);
 };
