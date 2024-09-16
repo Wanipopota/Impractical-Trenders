@@ -1,4 +1,4 @@
-// connection.js
+// requiring the mongoose package
 const mongoose = require ('mongoose');
 
 // Establish a connection to the database, which takes two arguments, first connecting the string & second connecting the option object  
