@@ -12,6 +12,12 @@ const app = express();
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: true, // Enable this for development
+  playground: true,    // Enable this for development
+  formatError: (error) => {
+    console.error('GraphQL Error:', error);
+    return error;
+  },
 });
 
 // Create a new instance of an Apollo server with the GraphQL schema
@@ -36,13 +42,23 @@ const startApolloServer = async () => {
     });
   }
 
-  db.once('open', () => {
+    // if we're in production, serve client/dist as static assets
+    if (process.env.NODE_ENV === 'production') {
+      app.use(express.static(path.join(__dirname, '../client/dist')));
+
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+      });
+    } 
+
+    await new Promise(resolve => db.once('open', resolve));
+    
     app.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
       console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
     });
-  });
-};
+ };
+
 
 // Call the async function to start the server
 startApolloServer();
