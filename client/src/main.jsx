@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { ApolloProvider } from '@apollo/client';
+import ReactDOM from 'react-dom/client'
+//import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import App from './App.jsx';
@@ -9,9 +8,6 @@ import Detail from './pages/Detail';
 import Login from './pages/Login';
 import Success from './pages/Success';
 import OrderHistory from './pages/OrderHistory';
-
-
-
 import client from './utils/apolloClient'; // Make sure to create this file as described in the previous message
 
 const router = createBrowserRouter([
@@ -46,4 +42,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ApolloProvider>
   </React.StrictMode>
 );
-
