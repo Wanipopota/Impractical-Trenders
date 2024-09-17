@@ -7,6 +7,7 @@
   - [Description](#Description)
   - [User-Story](#User-Story)
   - [Technology-Used](#technology-used)
+  - [Usage](#usage)
   - [License](#license)
   - [Contributing](#contributing)
   - [Demo](#Demo)
