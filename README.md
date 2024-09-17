@@ -4,12 +4,15 @@
   As a curious online shopper, I want to find and purchase a unique, unnecessary​ invention so that I can surprise my friends with an entertaining gift.​
   
   ## Table of Contents
-  - [Installation](#installation)
+  - [Description](#Description)
+  - [User-Story](#User-Story)
+  - [Technology-Used](#technology-used)
   - [Usage](#usage)
   - [License](#license)
   - [Contributing](#contributing)
-  - [Tests](#tests)
-  - [Questions](#questions)
+  - [Demo](#Demo)
+  - [Future-for-development](#Future-for-development)
+  - [Links](Links)
   
   ## User Story 
   GIVEN I am on the homepage of the Unnecessary Inventions online store​
@@ -43,10 +46,10 @@
   This project is licensed under the [License: MIT](https://opensource.org/licenses/MIT).
   
   ## Contributing
-  - [@wanipopopta]
-  - [@fredonyernesto]
-  - [@daniel639]
-  - [@fabiamedina3012]
+  - [@wanipopopta](https://github.com/Wanipopota)
+  - [@fredonyernesto](https://github.com/fredonyernesto)
+  - [@daniel639](https://github.com/Daniel639)
+  - [@fabiamedina3012](https://github.com/fabianmedina3012)
   
   
   ## Demo
