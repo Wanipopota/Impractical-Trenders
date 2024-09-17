@@ -17,22 +17,44 @@ db.once('open', async () => {
           'This new product is an office chair with tools attached to the sides so you can repair anything',
         image: 'tool-chair.jpg',
         price: 199.99,
-        quantity: 30
+        quantity: 30,
       },
       {
-        name: 'Sample Product 2',
-        description: 'This is the description for product 2.',
-        image: 'product2.jpg',
+        name: 'Cushion Speaker',
+        description: 'A rest cushion that has a hidden speaker, to listen to music or relax without the need for headphones.',
+        image: 'cushion-speaker.jpeg',
         quantity: 200,
         price: 29.99,
       },
       {
-        name: 'Sample Product 3',
-        description: 'This is the description for product 3.',
-        image: 'product3.jpg',
+        name: 'Solar Hat',
+        description: 'A hat with a small solar-powered fan that keeps you cool on sunny days.',
+        image: 'solar-hat.jpeg',
         quantity: 150,
         price: 39.99,
       },
+      {
+        name: 'Umbrella',
+        description: 'An umbrella that includes a waterproof speaker, allowing you to listen to music or receive calls in the rain.',
+        image: 'Umbrella.jpg',
+        quantity: 200,
+        price: 80,
+      },
+      {
+        name: 'Bacpack Table',
+        description: ' A backpack for camping or picnics includes a folding cutting board and basic cooking utensils.',
+        image: 'bacpack-table.jpeg',
+        quantity: 80,
+        price: 60,
+      },
+      {
+        name: 'Pijama Clock',
+        description: 'Pijamas with gentle vibrations that wake you up without needing an audible alarm, for a more "natural" awakening.',
+        image: 'pijama-clock.jpeg',
+        quantity: 500,
+        price: 25.99,
+      },
+     
     ]);
 
     console.log('Products seeded!');
