@@ -90,17 +90,18 @@ function Detail() {
               <img
                 src={`/images/${currentProduct.image}`}
                 alt={currentProduct.name}
-                className="w-full h-64 object-cover mb-4"
+                style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain' }}
+                className="mb-4"
               />
               <p className="text-xl font-bold text-terracotta mb-4">
                 Price: ${currentProduct.price}{' '}
-                <button 
+                <button
                   onClick={addToCart}
                   className="bg-sunflower text-forest-green py-2 px-4 rounded hover:bg-terracotta hover:text-white transition duration-300 mr-2"
                 >
                   Add to Cart
                 </button>
-                <button 
+                <button
                   onClick={removeFromCart}
                   disabled={!cart.find((p) => p._id === currentProduct._id)}
                   className="bg-terracotta text-white py-2 px-4 rounded hover:bg-red-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
