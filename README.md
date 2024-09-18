@@ -56,7 +56,10 @@
   N/A
   
   ## Future for development
-  N/A
+ - Customer Support: Add live chat or ticketing for immediate help.
+ - Email Notifications: Send updates for orders and promotions.
+ - Social Media Integration: Enable sharing products and logging in with social accounts.
+
 
   ## Links
   N/A 
