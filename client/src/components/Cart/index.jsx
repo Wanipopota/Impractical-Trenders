@@ -7,17 +7,13 @@ import CartItem from '../CartItem';
 import Auth from '../../utils/auth';
 import { useStoreContext } from '../../utils/GlobalState';
 import { TOGGLE_CART, ADD_MULTIPLE_TO_CART } from '../../utils/actions';
-import './style.css';
 
-// stripePromise returns a promise with the stripe object as soon as the Stripe package loads
 const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
 const Cart = () => {
   const [state, dispatch] = useStoreContext();
   const [getCheckout, { data }] = useLazyQuery(QUERY_CHECKOUT);
 
-  // We check to see if there is a data object that exists, if so this means that a checkout session was returned from the backend
-  // Then we should redirect to the checkout with a reference to our session id
   useEffect(() => {
     if (data) {
       stripePromise.then((res) => {
@@ -26,8 +22,6 @@ const Cart = () => {
     }
   }, [data]);
 
-  // If the cart's length or if the dispatch function is updated, check to see if the cart is empty.
-  // If so, invoke the getCart method and populate the cart with the existing from the session
   useEffect(() => {
     async function getCart() {
       const cart = await idbPromise('cart', 'get');
@@ -51,10 +45,7 @@ const Cart = () => {
     return sum.toFixed(2);
   }
 
-  // When the submit checkout method is invoked, loop through each item in the cart
-  // Add each item id to the productIds array and then invoke the getCheckout query passing an object containing the id for all our products
   function submitCheckout() {
-
     getCheckout({
       variables: { 
         products: [...state.cart],
@@ -64,44 +55,53 @@ const Cart = () => {
 
   if (!state.cartOpen) {
     return (
-      <div className="cart-closed" onClick={toggleCart}>
-        <span role="img" aria-label="trash">
+      <div className="fixed bottom-4 right-4 z-10" onClick={toggleCart}>
+        <button className="bg-sunflower text-forest-green p-4 rounded-full shadow-lg hover:bg-terracotta hover:text-white transition duration-300">
           🛒
-        </span>
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="cart">
-      <div className="close" onClick={toggleCart}>
-        [close]
+    <div className="fixed top-0 right-0 w-full md:w-1/3 h-full bg-white shadow-lg p-4 overflow-y-auto z-50">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold text-forest-green">Shopping Cart</h2>
+        <button onClick={toggleCart} className="text-terracotta hover:text-forest-green">
+          ✕
+        </button>
       </div>
-      <h2>Shopping Cart</h2>
       {state.cart.length ? (
         <div>
           {state.cart.map((item) => (
             <CartItem key={item._id} item={item} />
           ))}
 
-          <div className="flex-row space-between">
-            <strong>Total: ${calculateTotal()}</strong>
+          <div className="mt-8">
+            <div className="flex justify-between items-center mb-4">
+              <strong className="text-lg">Total:</strong>
+              <strong className="text-lg text-terracotta">${calculateTotal()}</strong>
+            </div>
 
-            {/* Check to see if the user is logged in. If so render a button to check out */}
             {Auth.loggedIn() ? (
-              <button onClick={submitCheckout}>Checkout</button>
+              <button
+                onClick={submitCheckout}
+                className="w-full bg-sunflower text-forest-green font-bold py-2 px-4 rounded hover:bg-terracotta hover:text-white transition duration-300"
+              >
+                Checkout
+              </button>
             ) : (
-              <span>(log in to check out)</span>
+              <p className="text-center text-gray-600 italic">(log in to check out)</p>
             )}
           </div>
         </div>
       ) : (
-        <h3>
-          <span role="img" aria-label="shocked">
+        <p className="text-center text-gray-600 italic">
+          <span role="img" aria-label="shocked" className="mr-2">
             😱
           </span>
           You haven't added anything to your cart yet!
-        </h3>
+        </p>
       )}
     </div>
   );

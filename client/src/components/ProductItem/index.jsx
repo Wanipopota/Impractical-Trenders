@@ -6,15 +6,7 @@ import { idbPromise } from "../../utils/helpers";
 
 function ProductItem(item) {
   const [state, dispatch] = useStoreContext();
-
-  const {
-    image,
-    name,
-    _id,
-    price,
-    quantity
-  } = item;
-
+  const { image, name, _id, price, quantity } = item;
   const { cart } = state
 
   const addToCart = () => {
@@ -39,19 +31,27 @@ function ProductItem(item) {
   }
 
   return (
-    <div className="card px-1 py-1">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <Link to={`/products/${_id}`}>
         <img
           alt={name}
           src={`/images/${image}`}
+          className="w-full h-48 object-cover"
         />
-        <p>{name}</p>
+        <div className="p-4">
+          <h3 className="text-lg font-semibold">{name}</h3>
+          <div className="mt-2">
+            <span className="text-sm text-gray-600">{quantity} {pluralize("item", quantity)} in stock</span>
+            <span className="block text-terracotta font-bold">${price}</span>
+          </div>
+        </div>
       </Link>
-      <div>
-        <div>{quantity} {pluralize("item", quantity)} in stock</div>
-        <span>${price}</span>
-      </div>
-      <button onClick={addToCart}>Add to cart</button>
+      <button 
+        onClick={addToCart}
+        className="w-full bg-sunflower text-forest-green font-bold py-2 px-4 hover:bg-terracotta hover:text-white transition duration-300"
+      >
+        Add to cart
+      </button>
     </div>
   );
 }

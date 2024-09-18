@@ -30,44 +30,49 @@ const CommentSection = ({ comments = [], isLoggedIn, productId }) => {
   };
 
   return (
-    <div className="comment-section">
-      <h3>Comments</h3>
+    <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+      <div className="p-6">
+        <h3 className="text-2xl font-bold text-forest-green mb-4">Comments</h3>
 
-      {/* Display the list of comments */}
-      <div className="comments-list">
-        {comments.length === 0 ? (
-          <p>No comments yet. Be the first to comment!</p>
+        <div className="comments-list mb-6">
+          {comments.length === 0 ? (
+            <p className="text-gray-700">No comments yet. Be the first to comment!</p>
+          ) : (
+            <ul className="space-y-4">
+              {comments.map((comment, index) => (
+                <li key={index} className="bg-gray-100 p-4 rounded">
+                  <strong className="text-forest-green">{comment.username}:</strong> {comment.commentText}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {isLoggedIn ? (
+          <div className="add-comment">
+            <textarea
+              value={newComment}
+              onChange={handleInputChange}
+              placeholder="Write your comment here..."
+              className="w-full p-2 border border-gray-300 rounded mb-2"
+              disabled={loading}
+            />
+            <button 
+              onClick={handleAddComment} 
+              className="bg-sunflower text-forest-green py-2 px-4 rounded hover:bg-terracotta hover:text-white transition duration-300"
+              disabled={loading}
+            >
+              {loading ? 'Adding Comment...' : 'Add Comment'}
+            </button>
+            {error && <p className="text-red-500 mt-2">Error adding comment. Please try again.</p>}
+          </div>
         ) : (
-          <ul>
-            {comments.map((comment, index) => (
-              <li key={index}>
-                <strong>{comment.username}:</strong> {comment.commentText}
-              </li>
-            ))}
-          </ul>
+          <p className="text-gray-700">Please log in to add a comment.</p>
         )}
       </div>
-
-      {/* Show comment form if the user is logged in */}
-      {isLoggedIn ? (
-        <div className="add-comment">
-          <textarea
-            value={newComment}
-            onChange={handleInputChange}
-            placeholder="Write your comment here..."
-            className="comment-input"
-            disabled={loading}
-          />
-          <button onClick={handleAddComment} className="add-comment-btn" disabled={loading}>
-            {loading ? 'Adding Comment...' : 'Add Comment'}
-          </button>
-          {error && <p>Error adding comment. Please try again.</p>}
-        </div>
-      ) : (
-        <p>Please log in to add a comment.</p>
-      )}
     </div>
   );
 };
 
 export default CommentSection;
+

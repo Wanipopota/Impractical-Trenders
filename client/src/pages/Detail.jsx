@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
 import Cart from '../components/Cart';
-import CommentSection from '../components/Comments'; // Import CommentSection
+import CommentSection from '../components/Comments';
 import { useStoreContext } from '../utils/GlobalState';
 import {
   REMOVE_FROM_CART,
@@ -11,10 +11,10 @@ import {
   ADD_TO_CART,
   UPDATE_PRODUCTS,
 } from '../utils/actions';
-import { QUERY_PRODUCT_BY_ID } from '../utils/queries'; // Import the query to fetch product by ID
+import { QUERY_PRODUCT_BY_ID } from '../utils/queries';
 import { idbPromise } from '../utils/helpers';
 import spinner from '../assets/spinner.gif';
-import AuthService from '../utils/auth'; // Import AuthService
+import AuthService from '../utils/auth';
 
 function Detail() {
   const [state, dispatch] = useStoreContext();
@@ -23,23 +23,18 @@ function Detail() {
   const [currentProduct, setCurrentProduct] = useState({});
   const { cart } = state;
 
-  // Query the product by ID instead of querying all products
   const { loading, data, error } = useQuery(QUERY_PRODUCT_BY_ID, {
     variables: { id },
   });
 
-  // Check if the user is logged in
   const isLoggedIn = AuthService.loggedIn();
 
   useEffect(() => {
     if (data) {
       const product = data.product;
-
-      // Save product in state and in IndexedDB for offline use
       setCurrentProduct(product);
       idbPromise('products', 'put', product);
     } else if (!loading) {
-      // Get product from IndexedDB if not available in the server response
       idbPromise('products', 'get').then((indexedProducts) => {
         const product = indexedProducts.find((p) => p._id === id);
         if (product) {
@@ -78,45 +73,53 @@ function Detail() {
     idbPromise('cart', 'delete', { ...currentProduct });
   };
 
-  if (loading) return <img src={spinner} alt="Loading" />;
-  if (error) return <p>Error loading product details</p>;
+  if (loading) return <img src={spinner} alt="Loading" className="mx-auto" />;
+  if (error) return <p className="text-red-500 text-center">Error loading product details</p>;
 
   return (
-    <>
+    <div className="container mx-auto px-4 py-8">
       {currentProduct && cart ? (
-        <div className="container my-1">
-          <Link to="/">← Back to Products</Link>
+        <>
+          <Link to="/" className="text-forest-green hover:text-terracotta mb-4 inline-block">
+            ← Back to Products
+          </Link>
+          <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+            <div className="p-6">
+              <h2 className="text-3xl font-bold text-forest-green mb-4">{currentProduct.name}</h2>
+              <p className="text-gray-700 mb-4">{currentProduct.description}</p>
+              <img
+                src={`/images/${currentProduct.image}`}
+                alt={currentProduct.name}
+                className="w-full h-64 object-cover mb-4"
+              />
+              <p className="text-xl font-bold text-terracotta mb-4">
+                Price: ${currentProduct.price}{' '}
+                <button 
+                  onClick={addToCart}
+                  className="bg-sunflower text-forest-green py-2 px-4 rounded hover:bg-terracotta hover:text-white transition duration-300 mr-2"
+                >
+                  Add to Cart
+                </button>
+                <button 
+                  onClick={removeFromCart}
+                  disabled={!cart.find((p) => p._id === currentProduct._id)}
+                  className="bg-terracotta text-white py-2 px-4 rounded hover:bg-red-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Remove from Cart
+                </button>
+              </p>
+            </div>
+          </div>
 
-          <h2>{currentProduct.name}</h2>
-
-          <h3>{currentProduct.description}</h3>
-
-          <p>
-            <strong>Price:</strong> ${currentProduct.price}{' '}
-            <button onClick={addToCart}>Add to Cart</button>
-            <button
-              disabled={!cart.find((p) => p._id === currentProduct._id)}
-              onClick={removeFromCart}
-            >
-              Remove from Cart
-            </button>
-          </p>
-
-          <img
-            src={`/images/${currentProduct.image}`}
-            alt={currentProduct.name}
-          />
-
-          {/* Render the CommentSection component */}
           <CommentSection
             comments={currentProduct.comments || []}
             isLoggedIn={isLoggedIn}
             productId={currentProduct._id}
           />
-        </div>
+        </>
       ) : null}
       <Cart />
-    </>
+    </div>
   );
 }
 
