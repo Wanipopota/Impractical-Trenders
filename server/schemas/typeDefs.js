@@ -6,6 +6,13 @@ const typeDefs = `
     image: String
     quantity: Int
     price: Float
+    comments: [Comment] # Add comments field
+  }
+
+  type Comment {
+    commentText: String
+    username: String
+    createdAt: String
   }
 
   type Order {
@@ -54,6 +61,7 @@ const typeDefs = `
     updateUser(firstName: String, lastName: String, email: String, password: String): User
     updateProduct(_id: ID!, quantity: Int!): Product
     login(email: String!, password: String!): Auth
+    addComment(productId: ID!, commentText: String!): Product # Add comment mutation
   }
 `;
 

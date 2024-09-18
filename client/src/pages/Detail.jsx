@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
 import Cart from '../components/Cart';
+import CommentSection from '../components/Comments'; // Import CommentSection
 import { useStoreContext } from '../utils/GlobalState';
 import {
   REMOVE_FROM_CART,
@@ -10,57 +11,43 @@ import {
   ADD_TO_CART,
   UPDATE_PRODUCTS,
 } from '../utils/actions';
-import { QUERY_PRODUCTS } from '../utils/queries';
+import { QUERY_PRODUCT_BY_ID } from '../utils/queries'; // Import the query to fetch product by ID
 import { idbPromise } from '../utils/helpers';
 import spinner from '../assets/spinner.gif';
+import AuthService from '../utils/auth'; // Import AuthService
 
 function Detail() {
   const [state, dispatch] = useStoreContext();
   const { id } = useParams();
 
   const [currentProduct, setCurrentProduct] = useState({});
+  const { cart } = state;
 
-  const { loading, data } = useQuery(QUERY_PRODUCTS);
+  // Query the product by ID instead of querying all products
+  const { loading, data, error } = useQuery(QUERY_PRODUCT_BY_ID, {
+    variables: { id },
+  });
 
-  const { products, cart } = state;
+  // Check if the user is logged in
+  const isLoggedIn = AuthService.loggedIn();
 
   useEffect(() => {
-    // already in global store
-    if (products.length) {
-      const product = products.find((product) => product._id === id);
+    if (data) {
+      const product = data.product;
 
-      const item = {
-        image: product.image,
-        name: product.name,
-        _id: product._id,
-        price: product.price,
-        quantity: product.quantity,
-        description: product.description
-      };
-      
-      setCurrentProduct(item);
-    }
-    // retrieved from server
-    else if (data) {
-      dispatch({
-        type: UPDATE_PRODUCTS,
-        products: data.products,
-      });
-
-      data.products.forEach((product) => {
-        idbPromise('products', 'put', product);
-      });
-    }
-    // get cache from idb
-    else if (!loading) {
+      // Save product in state and in IndexedDB for offline use
+      setCurrentProduct(product);
+      idbPromise('products', 'put', product);
+    } else if (!loading) {
+      // Get product from IndexedDB if not available in the server response
       idbPromise('products', 'get').then((indexedProducts) => {
-        dispatch({
-          type: UPDATE_PRODUCTS,
-          products: indexedProducts,
-        });
+        const product = indexedProducts.find((p) => p._id === id);
+        if (product) {
+          setCurrentProduct(product);
+        }
       });
     }
-  }, [products, data, loading, dispatch, id]);
+  }, [data, loading, id]);
 
   const addToCart = () => {
     const itemInCart = cart.find((cartItem) => cartItem._id === id);
@@ -88,9 +75,11 @@ function Detail() {
       type: REMOVE_FROM_CART,
       _id: currentProduct._id,
     });
-
     idbPromise('cart', 'delete', { ...currentProduct });
   };
+
+  if (loading) return <img src={spinner} alt="Loading" />;
+  if (error) return <p>Error loading product details</p>;
 
   return (
     <>
@@ -103,7 +92,7 @@ function Detail() {
           <h3>{currentProduct.description}</h3>
 
           <p>
-            <strong>Price:</strong>${currentProduct.price}{' '}
+            <strong>Price:</strong> ${currentProduct.price}{' '}
             <button onClick={addToCart}>Add to Cart</button>
             <button
               disabled={!cart.find((p) => p._id === currentProduct._id)}
@@ -117,9 +106,15 @@ function Detail() {
             src={`/images/${currentProduct.image}`}
             alt={currentProduct.name}
           />
+
+          {/* Render the CommentSection component */}
+          <CommentSection
+            comments={currentProduct.comments || []}
+            isLoggedIn={isLoggedIn}
+            productId={currentProduct._id}
+          />
         </div>
       ) : null}
-      {loading ? <img src={spinner} alt="loading" /> : null}
       <Cart />
     </>
   );
