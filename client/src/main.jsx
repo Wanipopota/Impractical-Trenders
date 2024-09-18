@@ -1,6 +1,8 @@
-import ReactDOM from 'react-dom/client'
-//import './index.css'
+import React from 'react'; // Add this import for React
+import ReactDOM from 'react-dom/client';
+//import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/client'; // Make sure to import ApolloProvider
 
 import App from './App.jsx';
 import Home from './pages/Home';
@@ -18,16 +20,20 @@ const router = createBrowserRouter([
       {
         index: true, 
         element: <Home />
-      }, {
+      }, 
+      {
         path: '/login',
         element: <Login />
-      }, {
+      }, 
+      {
         path: '/success',
         element: <Success />
-      }, {
+      }, 
+      {
         path: '/orderHistory',
         element: <OrderHistory />
-      }, {
+      }, 
+      {
         path: '/products/:id',
         element: <Detail />
       }

@@ -1,7 +1,6 @@
-//apolloClient.js
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { getToken } from '../utils/auth';
+import AuthService from './auth'; // Import the AuthService class
 
 const httpLink = createHttpLink({
     uri: '/graphql',
@@ -9,7 +8,7 @@ const httpLink = createHttpLink({
   });
 
 const authLink = setContext((_, { headers }) => {
-  const token = getToken();
+  const token = AuthService.getToken(); // Use getToken method from AuthService
   return {
     headers: {
       ...headers,
