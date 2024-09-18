@@ -1,8 +1,10 @@
-import React from 'react'; // Add this import for React
-import ReactDOM from 'react-dom/client';
-//import './index.css';
+// client/src/main.jsx
+import React from 'react';  // import React from 'react';
+import ReactDOM from 'react-dom/client'
+import { ApolloProvider } from '@apollo/client';  // import { ApolloProvider } from '@apollo/client'; to import the ApolloProvider component.
+
+import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { ApolloProvider } from '@apollo/client'; // Make sure to import ApolloProvider
 
 import App from './App.jsx';
 import Home from './pages/Home';
@@ -10,7 +12,8 @@ import Detail from './pages/Detail';
 import Login from './pages/Login';
 import Success from './pages/Success';
 import OrderHistory from './pages/OrderHistory';
-import client from './utils/apolloClient'; // Make sure to create this file as described in the previous message
+import client from './utils/apolloClient'; 
+import Signup from './pages/Signup';
 
 const router = createBrowserRouter([
   {
@@ -20,20 +23,19 @@ const router = createBrowserRouter([
       {
         index: true, 
         element: <Home />
-      }, 
-      {
+      }, {
         path: '/login',
         element: <Login />
-      }, 
-      {
+      }, {
+        path: '/signup',  
+        element: <Signup />  
+      }, {
         path: '/success',
         element: <Success />
-      }, 
-      {
+      }, {
         path: '/orderHistory',
         element: <OrderHistory />
-      }, 
-      {
+      }, {
         path: '/products/:id',
         element: <Detail />
       }

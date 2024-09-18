@@ -1,54 +1,51 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
 import Auth from "../../utils/auth";
-import { Link, useLocation } from "react-router-dom";
+
+import { useStoreContext } from "../../utils/GlobalState";
 
 function Nav() {
-  const location = useLocation();
+  const [state] = useStoreContext();
 
   function showNavigation() {
     if (Auth.loggedIn()) {
       return (
-        <ul className="flex-row">
-          <li className="mx-1">
-            <Link to="/orderHistory">Order History</Link>
-          </li>
-          <li className="mx-1">
-            {/* this is not using the Link component to logout the user and then refresh the application to the start */}
-            <a href="/" onClick={() => Auth.logout()}>
-              Logout
-            </a>
-          </li>
-        </ul>
+        <div className="flex items-center">
+          <Link to="/orderHistory" className="text-white hover:text-sunflower mr-4">
+            Order History
+          </Link>
+          <button onClick={() => Auth.logout()} className="text-white hover:text-sunflower">
+            Logout
+          </button>
+        </div>
       );
     } else {
-      // If user is on the login page, show the "Go to Home" button
-      if (location.pathname === "/login") {
-        return (
-          <ul className="flex-row">
-            <li className="mx-1">
-              <Link to="/">Go to Home</Link>
-            </li>
-          </ul>
-        );
-      } else {
-        // Default: show the "Log In/Sign Up" button
-        return (
-          <ul className="flex-row">
-            <li className="mx-1">
-              <Link to="/login">Log In/Sign Up</Link>
-            </li>
-          </ul>
-        );
-      }
+      return (
+        <div className="flex items-center">
+          <Link to="/signup" className="text-white hover:text-sunflower mr-4">
+            Signup
+          </Link>
+          <Link to="/login" className="text-white hover:text-sunflower">
+            Login
+          </Link>
+        </div>
+      );
     }
   }
 
   return (
-    <header className="flex-row px-1">
-      <h1>
-        <Link to="/">Impractical Tenders</Link>
-      </h1>
-
-      <nav>{showNavigation()}</nav>
+    <header className="bg-forest-green p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link to="/" className="text-2xl font-bold text-white">
+          The Impractical Trenders
+        </Link>
+        <nav className="flex items-center">
+          {showNavigation()}
+          <div className="ml-4 text-white">
+            🛒 ({state.cart.length})
+          </div>
+        </nav>
+      </div>
     </header>
   );
 }
