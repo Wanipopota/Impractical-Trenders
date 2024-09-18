@@ -1,3 +1,4 @@
+// server/seeds/seed.js
 const db = require('../config/connection');
 const { User, Product, Order } = require('../models');
 const bcrypt = require('bcrypt');
@@ -74,9 +75,9 @@ db.once('open', async () => {
         ],
       },
       {
-        name: 'Bacpack Table',
+        name: 'Backpack Table',
         description: 'A backpack for camping or picnics includes a folding cutting board and basic cooking utensils.',
-        image: 'bacpack-table.jpeg',
+        image: 'backpack-table.jpeg',
         quantity: 80,
         price: 60,
         comments: [

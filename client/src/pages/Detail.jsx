@@ -88,9 +88,13 @@ function Detail() {
               <h2 className="text-3xl font-bold text-forest-green mb-4">{currentProduct.name}</h2>
               <p className="text-gray-700 mb-4">{currentProduct.description}</p>
               <img
-                src={`/images/${currentProduct.image}`}
-                alt={currentProduct.name}
-                className="w-full h-64 object-cover mb-4"
+              alt={currentProduct.name}
+              src={`/images/${currentProduct.image}`}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/images/placeholder.jpg';
+              }}
+              className="w-full h-64 object-cover mb-4"
               />
               <p className="text-xl font-bold text-terracotta mb-4">
                 Price: ${currentProduct.price}{' '}

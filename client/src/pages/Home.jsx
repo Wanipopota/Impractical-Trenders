@@ -1,3 +1,4 @@
+// client/src/pages/Home.jsx
 import ProductList from "../components/ProductList";
 import Cart from "../components/Cart";
 

@@ -35,16 +35,14 @@ function Nav() {
 
   return (
     <header className="bg-forest-green p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-white">
-          The Impractical Trenders
-        </Link>
-        <nav className="flex items-center">
-          {showNavigation()}
-          <div className="ml-4 text-white">
-            🛒 ({state.cart.length})
-          </div>
-        </nav>
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="flex items-center">
+          <img src="/images/logo.png" alt="Logo" className="h-8 w-auto mr-2" />
+          <Link to="/" className="text-white text-2xl font-bold">
+            The Impractical Trenders
+          </Link>
+        </div>
+        <nav>{showNavigation()}</nav>
       </div>
     </header>
   );

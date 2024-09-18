@@ -1,3 +1,5 @@
+// client/src/components/ProductItem/index.jsx
+import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { pluralize } from "../../utils/helpers"
 import { useStoreContext } from "../../utils/GlobalState";
@@ -6,6 +8,7 @@ import { idbPromise } from "../../utils/helpers";
 
 function ProductItem(item) {
   const [state, dispatch] = useStoreContext();
+  const [imageSrc, setImageSrc] = useState('');
   const { image, name, _id, price, quantity } = item;
   const { cart } = state
 
@@ -35,7 +38,11 @@ function ProductItem(item) {
       <Link to={`/products/${_id}`}>
         <img
           alt={name}
-          src={`/images/${image}`}
+          src={ `/images/${image}`}
+          // onError={(e) => {
+          //   e.target.onerror = null; 
+          //   e.target.src = '/images/placeholder.jpg'
+          // }}
           className="w-full h-48 object-cover"
         />
         <div className="p-4">
@@ -57,3 +64,4 @@ function ProductItem(item) {
 }
 
 export default ProductItem;
+
