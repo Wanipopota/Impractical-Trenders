@@ -53,3 +53,22 @@ export const QUERY_USER = gql`
     }
   }
 `;
+
+// Add this query to fetch a product by ID along with its comments
+export const QUERY_PRODUCT_BY_ID = gql`
+  query getProduct($id: ID!) {
+    product(_id: $id) {
+      _id
+      name
+      description
+      price
+      quantity
+      image
+      comments {
+        commentText
+        username
+        createdAt
+      }
+    }
+  }
+`;

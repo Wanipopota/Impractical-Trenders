@@ -9,7 +9,7 @@ db.once('open', async () => {
     await User.deleteMany({});
     await Order.deleteMany({});
 
-    // Create products
+    // Create products with comments
     const products = await Product.insertMany([
       {
         name: 'Tool Chair',
@@ -18,6 +18,18 @@ db.once('open', async () => {
         image: 'tool-chair.jpg',
         price: 199.99,
         quantity: 30,
+        comments: [
+          {
+            commentText: 'This chair saved me so much time when repairing things around the office!',
+            username: 'John Doe',
+            createdAt: new Date(),
+          },
+          {
+            commentText: 'A bit pricey, but the convenience is worth it.',
+            username: 'Jane Smith',
+            createdAt: new Date(),
+          },
+        ],
       },
       {
         name: 'Cushion Speaker',
@@ -25,6 +37,13 @@ db.once('open', async () => {
         image: 'cushion-speaker.jpeg',
         quantity: 200,
         price: 29.99,
+        comments: [
+          {
+            commentText: 'Great for relaxing without disturbing others!',
+            username: 'Jane Smith',
+            createdAt: new Date(),
+          },
+        ],
       },
       {
         name: 'Solar Hat',
@@ -32,6 +51,13 @@ db.once('open', async () => {
         image: 'solar-hat.jpeg',
         quantity: 150,
         price: 39.99,
+        comments: [
+          {
+            commentText: 'This is a lifesaver on hot days!',
+            username: 'John Doe',
+            createdAt: new Date(),
+          },
+        ],
       },
       {
         name: 'Umbrella',
@@ -39,13 +65,27 @@ db.once('open', async () => {
         image: 'Umbrella.jpg',
         quantity: 200,
         price: 80,
+        comments: [
+          {
+            commentText: 'Super useful during rainy days, keeps me entertained!',
+            username: 'Jane Smith',
+            createdAt: new Date(),
+          },
+        ],
       },
       {
         name: 'Bacpack Table',
-        description: ' A backpack for camping or picnics includes a folding cutting board and basic cooking utensils.',
+        description: 'A backpack for camping or picnics includes a folding cutting board and basic cooking utensils.',
         image: 'bacpack-table.jpeg',
         quantity: 80,
         price: 60,
+        comments: [
+          {
+            commentText: 'Perfect for picnics, I love the convenience!',
+            username: 'John Doe',
+            createdAt: new Date(),
+          },
+        ],
       },
       {
         name: 'Pijama Clock',
@@ -53,11 +93,17 @@ db.once('open', async () => {
         image: 'pijama-clock.jpeg',
         quantity: 500,
         price: 25.99,
+        comments: [
+          {
+            commentText: 'Wakes me up without annoying sounds, highly recommend!',
+            username: 'Jane Smith',
+            createdAt: new Date(),
+          },
+        ],
       },
-     
     ]);
 
-    console.log('Products seeded!');
+    console.log('Products with comments seeded!');
 
     // Hash user passwords
     const hashedPassword = await bcrypt.hash('password123', 10);

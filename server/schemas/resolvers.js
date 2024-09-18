@@ -9,7 +9,7 @@ const resolvers = {
 
       if (name) {
         params.name = {
-          $regex: name
+          $regex: name,
         };
       }
 
@@ -20,7 +20,9 @@ const resolvers = {
     },
     user: async (parent, args, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate('orders.products');
+        const user = await User.findById(context.user._id).populate(
+          'orders.products'
+        );
 
         user.orders.sort((a, b) => b.purchaseDate - a.purchaseDate);
 
@@ -31,7 +33,9 @@ const resolvers = {
     },
     order: async (parent, { _id }, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate('orders.products');
+        const user = await User.findById(context.user._id).populate(
+          'orders.products'
+        );
 
         return user.orders.id(_id);
       }
@@ -51,7 +55,7 @@ const resolvers = {
             product_data: {
               name: product.name,
               description: product.description,
-              images: [`${url}/images/${product.image}`]
+              images: [`${url}/images/${product.image}`],
             },
             unit_amount: product.price * 100,
           },
@@ -116,8 +120,32 @@ const resolvers = {
       const token = signToken(user);
 
       return { token, user };
-    }
-  }
+    },
+    // Add the addComment mutation
+    addComment: async (parent, { productId, commentText }, context) => {
+      if (context.user) {
+        const username = `${context.user.firstName || ''} ${context.user.lastName || ''}`.trim(); // Handle undefined values safely
+        
+        const updatedProduct = await Product.findByIdAndUpdate(
+          productId,
+          {
+            $push: {
+              comments: {
+                commentText,
+                username, // Use the combined name
+                createdAt: new Date(),
+              },
+            },
+          },
+          { new: true, runValidators: true }
+        );
+        
+        return updatedProduct;
+      }
+      
+      throw new AuthenticationError('You need to be logged in to comment');
+    },
+  },
 };
 
 module.exports = resolvers;
