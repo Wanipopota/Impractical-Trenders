@@ -50,11 +50,11 @@
   - [@fredonyernesto](https://github.com/fredonyernesto)
   - [@daniel639](https://github.com/Daniel639)
   - [@fabiamedina3012](https://github.com/fabianmedina3012)
-  
-  
-  ## Demo
-  N/A
-  
+
+  ## screenshot of the page 
+  ![proyecto](https://github.com/user-attachments/assets/3e440fe2-b8bf-4226-b255-7236fbeedd44)
+
+
   ## Future for development
  - Customer Support: Add live chat or ticketing for immediate help.
  - Email Notifications: Send updates for orders and promotions.
@@ -62,7 +62,7 @@
 
 
   ## Links
-  N/A 
+  Render Page: https://impractical-trenders.onrender.com/
 
 
   
